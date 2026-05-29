@@ -169,6 +169,16 @@
 </head>
 <body>
 
+    <!-- ELEMENTOS DE ÁUDIO EMBUTIDOS (Formato MP3 universal e ficheiros locais) -->
+    <audio id="audio-fundo-mar" loop preload="auto">
+        <source src="fundo-mar.mp3" type="audio/mpeg">
+        <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_f53ec9e418.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="audio-bolhas" preload="auto">
+        <source src="bolhas.mp3" type="audio/mpeg">
+        <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_2d0d3d52c2.mp3" type="audio/mpeg">
+    </audio>
+
     <!-- CAMADA 1: Criaturas do Fundo do Mar (Ficam atrás do cartão) -->
     <div class="sea-layer">
         <div class="sea-creature octopus">🐙</div>
@@ -215,9 +225,14 @@
                     Aylla Maitê
                 </div>
                 
-                <p class="text-slate-500 text-sm leading-relaxed mb-8 px-2">
+                <p class="text-slate-500 text-sm leading-relaxed mb-6 px-2">
                     Papai e mamãe, o Titio Paulo resgatou um baú perdido no fundo do mar... e ele pertence todinho à nossa princesa que acaba de fazer 1 aninho!
                 </p>
+
+                <!-- Lembrete amigável para ativar o som -->
+                <div class="text-[11px] text-pink-500 font-medium mb-6 bg-pink-50 py-1.5 px-3 rounded-full animate-pulse">
+                    🎵 Ligue o som do seu dispositivo para mergulhar!
+                </div>
                 
                 <button onclick="abrirPresente()" class="btn-ocean w-full flex items-center justify-center gap-2 font-semibold text-sm py-4 px-6 rounded-2xl relative overflow-hidden group">
                     <span class="relative z-10 flex items-center gap-2 text-white">
@@ -253,14 +268,10 @@
                     
                     <!-- IMAGEM DO COMPROVANTE -->
                     <div class="rounded-xl overflow-hidden border border-slate-100 bg-slate-50 w-full flex items-center justify-center p-1 relative min-h-[250px]">
-                        
-                        <!-- Texto de Erro (Fica por baixo e só aparece se a imagem falhar) -->
                         <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-4 z-0">
                             <svg class="w-8 h-8 mb-2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            <span class="text-[10px] text-slate-400">A imagem <b>comprovante.jpeg</b> não foi encontrada na mesma pasta.</span>
+                            <span class="text-[10px] text-slate-400">A imagem <b>comprovante.jpeg</b> não foi encontrada.</span>
                         </div>
-
-                        <!-- Se a imagem não for encontrada, o comando "onerror" esconde a imagem quebrada para mostrar o texto de erro acima -->
                         <img src="comprovante.jpeg" onerror="this.style.opacity='0'" alt="Comprovante de Transferência" class="w-full max-h-[400px] object-contain hover:scale-105 transition-transform duration-500 z-10 relative rounded-lg">
                     </div>
                     
@@ -273,6 +284,14 @@
 
     <script>
         const container = document.getElementById('dynamic-sea');
+        
+        // --- ATUALIZAÇÃO DOS SONS ---
+        // Ligando aos elementos de áudio que agora estão fixos no HTML
+        const audioFundoMar = document.getElementById('audio-fundo-mar'); 
+        audioFundoMar.volume = 0.4; 
+        
+        const audioBolhas = document.getElementById('audio-bolhas');
+        audioBolhas.volume = 1.0; 
 
         // Criação de bolhas flutuantes ao fundo
         function criarBolhas() {
@@ -313,36 +332,70 @@
         criarBolhas();
         criarPeixes();
 
-        // Efeito de "Bolhas a Estourar" ao abrir o presente
+        // Efeito Aprimorado: "Muitas Bolhas a Subir"
         function dispararEfeitoMarinho() {
-            var duration = 3 * 1000;
+            var duration = 4 * 1000;
             var animationEnd = Date.now() + duration;
             var colors = ['#d4f0f0', '#a3c9e2', '#ffffff', '#e2d4f0'];
 
+            // Explosão Inicial Gigante de Bolhas
+            confetti({
+                particleCount: 150,
+                startVelocity: 45,
+                spread: 120,
+                origin: { x: 0.5, y: 1.1 }, // Surgem do rodapé
+                colors: colors,
+                shapes: ['circle'],
+                scalar: 1.2,
+                gravity: -0.1, // A gravidade negativa faz as bolhas "flutuarem para cima"!
+                ticks: 300
+            });
+
+            // Efeito contínuo de bolhas a subir
             var interval = setInterval(function() {
                 var timeLeft = animationEnd - Date.now();
                 if (timeLeft <= 0) return clearInterval(interval);
 
-                var particleCount = 50 * (timeLeft / duration);
+                var particleCount = 100 * (timeLeft / duration); // Muitas bolhas ao longo dos 4 segundos
                 
                 confetti({
                     particleCount: particleCount,
-                    startVelocity: 20,
+                    startVelocity: 25,
                     spread: 360,
-                    origin: { x: Math.random() * 0.4 + 0.3, y: 0.8 },
+                    origin: { x: Math.random() * 0.8 + 0.1, y: Math.random() * 0.2 + 0.8 },
                     colors: colors,
                     shapes: ['circle'],
-                    scalar: Math.random() * 1.5 + 0.5,
-                    drift: Math.random() - 0.5,
-                    gravity: 0.3, 
-                    ticks: 150
+                    scalar: Math.random() * 1.8 + 0.8, // Tamanhos variados de bolhas
+                    drift: Math.random() * 2 - 1, // Faz elas sambarem de um lado pro outro enquanto sobem
+                    gravity: -0.2, // Sobem mais rápido
+                    ticks: 200
                 });
-            }, 250);
+            }, 200);
         }
 
         function abrirPresente() {
             const viewIntro = document.getElementById('view-intro');
             const viewPix = document.getElementById('view-pix');
+            
+            // Tocar os áudios com tratamento de erro (Promise) para evitar problemas com bloqueios dos navegadores
+            try {
+                const playFundoMar = audioFundoMar.play();
+                if (playFundoMar !== undefined) {
+                    playFundoMar.catch(error => {
+                        console.log("Áudio Fundo do Mar bloqueado ou indisponível:", error);
+                    });
+                }
+                
+                audioBolhas.currentTime = 0;
+                const playBolhas = audioBolhas.play();
+                if (playBolhas !== undefined) {
+                    playBolhas.catch(error => {
+                        console.log("Áudio das bolhas bloqueado ou indisponível:", error);
+                    });
+                }
+            } catch (err) {
+                console.log("Erro geral ao tentar tocar áudio:", err);
+            }
             
             viewIntro.classList.remove('active-view');
             viewIntro.classList.add('hidden-view');
@@ -351,6 +404,8 @@
                 viewIntro.style.display = 'none';
                 viewPix.classList.remove('hidden-view');
                 viewPix.classList.add('active-view');
+                
+                // Dispara as bolhas
                 dispararEfeitoMarinho();
             }, 400);
         }
