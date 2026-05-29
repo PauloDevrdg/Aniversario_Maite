@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1 Aninho - Aylla Maitê</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fontes Premium -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <!-- Confetti JS para animação de abertura -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            /* Paleta exata do convite aguarela */
+            --sea-aqua: #d4f0f0;
+            --sea-blue: #a3c9e2;
+            --sea-lilac: #e2d4f0;
+            --sea-pink: #f0b4c8;
+            --sea-sand: #f5deb3;
+            --text-dark: #334155;
+            --text-light: #64748b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            /* Fundo gradiente simulando profundidade do oceano */
+            background: linear-gradient(180deg, #ffffff 0%, var(--sea-aqua) 40%, var(--sea-blue) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .font-signature {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        /* O Cartão Central de Vidro - Premium UI */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 32px;
+            box-shadow: 0 20px 50px -10px rgba(100, 150, 200, 0.3), inset 0 0 0 2px rgba(255, 255, 255, 0.4);
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            z-index: 20;
+            overflow: hidden;
+        }
+
+        /* Ondas SVG exclusivas para o rodapé da TELA (e não só do cartão) */
+        .ocean-floor {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: auto;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .btn-ocean {
+            background: linear-gradient(135deg, #f472b6, #c084fc);
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px -3px rgba(244, 114, 182, 0.4);
+        }
+
+        .btn-ocean:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -4px rgba(244, 114, 182, 0.6);
+            filter: brightness(1.05);
+        }
+
+        .view-transition {
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .hidden-view {
+            opacity: 0; transform: translateY(15px);
+            pointer-events: none; position: absolute; visibility: hidden;
+        }
+
+        .active-view {
+            opacity: 1; transform: translateY(0);
+            pointer-events: auto; position: relative; visibility: visible;
+        }
+
+        /* --- ANIMAÇÕES DO FUNDO DO MAR --- */
+        .sea-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Criaturas Marinhas (Estilo Aguarela Suave) */
+        .sea-creature {
+            position: absolute;
+            opacity: 0.45;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+            transition: transform 0.3s;
+        }
+
+        /* Polvo (Canto Superior Esquerdo) */
+        .octopus { top: 5%; left: 5%; font-size: 5rem; animation: float-diag 8s ease-in-out infinite alternate; filter: hue-rotate(-20deg) opacity(0.5); }
+        
+        /* Alforreca (Canto Superior Direito) */
+        .jellyfish { top: 10%; right: 8%; font-size: 6rem; animation: float-up-down 6s ease-in-out infinite alternate; filter: hue-rotate(40deg) opacity(0.4); }
+        
+        /* Tartaruga (Canto Inferior Esquerdo) */
+        .turtle { bottom: 15%; left: 8%; font-size: 5.5rem; animation: swim-slow 12s ease-in-out infinite alternate; filter: opacity(0.6); z-index: 10;}
+        
+        /* Caranguejo (Canto Inferior Direito na areia) */
+        .crab { bottom: 3%; right: 10%; font-size: 4rem; animation: side-step 4s ease-in-out infinite alternate; filter: opacity(0.6); z-index: 10;}
+
+        /* Corais */
+        .coral { position: absolute; bottom: -10px; opacity: 0.7; z-index: 3; }
+        .coral-left { left: 2%; transform: scale(1.2); filter: hue-rotate(45deg); }
+        .coral-right { right: 2%; transform: scale(0.9) scaleX(-1); filter: hue-rotate(-30deg); }
+
+        /* Keyframes */
+        @keyframes float-diag { 0% { transform: translate(0, 0) rotate(-5deg); } 100% { transform: translate(20px, 20px) rotate(5deg); } }
+        @keyframes float-up-down { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-30px) scale(1.05); } }
+        @keyframes swim-slow { 0% { transform: translateX(-10px) rotate(-10deg); } 100% { transform: translateX(30px) rotate(5deg); } }
+        @keyframes side-step { 0% { transform: translateX(0) rotate(0); } 100% { transform: translateX(-15px) rotate(-5deg); } }
+        
+        /* Bolhas Dinâmicas */
+        .bubble {
+            position: absolute;
+            bottom: -50px;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+        }
+
+        /* Peixes a nadar */
+        .fish {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.4;
+            animation: swim-across linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) translateX(0) scale(0.8); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) translateX(30px) scale(1.2); opacity: 0; }
+        }
+
+        @keyframes swim-across {
+            0% { transform: translateX(-100px) scaleX(-1); }
+            100% { transform: translateX(110vw) scaleX(-1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CAMADA 1: Criaturas do Fundo do Mar (Ficam atrás do cartão) -->
+    <div class="sea-layer">
+        <div class="sea-creature octopus">🐙</div>
+        <div class="sea-creature jellyfish">🪼</div>
+        <div class="sea-creature turtle">🐢</div>
+        <div class="sea-creature crab">🦀</div>
+        
+        <svg class="coral coral-left" width="120" height="150" viewBox="0 0 100 100" fill="var(--sea-pink)">
+            <path d="M50 100 Q40 70 20 60 Q35 70 45 90 Q50 60 40 30 Q55 50 55 90 Q65 60 80 50 Q70 65 60 90 Z" opacity="0.6"/>
+        </svg>
+        <svg class="coral coral-right" width="100" height="130" viewBox="0 0 100 100" fill="var(--sea-lilac)">
+            <path d="M50 100 Q40 70 20 60 Q35 70 45 90 Q50 60 40 30 Q55 50 55 90 Q65 60 80 50 Q70 65 60 90 Z" opacity="0.6"/>
+        </svg>
+    </div>
+
+    <!-- CAMADA 2: Partículas Dinâmicas (Bolhas e Peixes inseridos via JS) -->
+    <div class="sea-layer" id="dynamic-sea"></div>
+
+    <!-- CAMADA 3: ONDAS DO RODAPÉ DA TELA -->
+    <svg class="ocean-floor" viewBox="0 0 1440 280" xmlns="http://www.w3.org/2000/svg">
+        <path fill="var(--sea-sand)" fill-opacity="0.3" d="M0,256L1440,192L1440,320L0,320Z"></path>
+        <path fill="var(--sea-lilac)" fill-opacity="0.4" d="M0,160L80,176C160,192,320,224,480,213.3C640,203,800,149,960,144C1120,139,1280,181,1360,197.3L1440,213.3L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
+    </svg>
+
+    <!-- CAMADA PRINCIPAL: Cartão UI Premium -->
+    <main class="glass-card">
+        
+        <div class="p-8 sm:p-10 relative z-10">
+            
+            <!-- TELA 1: INTRODUÇÃO -->
+            <section id="view-intro" class="view-transition active-view flex flex-col items-center text-center">
+                
+                <div class="mb-4 text-pink-400 opacity-90">
+                    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22v-7l-2-2"></path>
+                        <path d="M12 15l2-2"></path>
+                        <path d="M12 22C10 22 4 19 4 13c0-3.5 2-7 4-9 1-1 3-2 4-2s3 1 4 2c2 2 4 5.5 4 9 0 6-6 9-8 9z"></path>
+                    </svg>
+                </div>
+
+                <h1 class="text-slate-400 text-[10px] font-bold tracking-[0.25em] uppercase mb-3">Um tesouro especial para a</h1>
+                
+                <div class="font-signature text-6xl text-pink-400 mb-6 leading-none drop-shadow-sm">
+                    Aylla Maitê
+                </div>
+                
+                <p class="text-slate-500 text-sm leading-relaxed mb-8 px-2">
+                    Papai e mamãe, o Titio Paulo resgatou um baú perdido no fundo do mar... e ele pertence todinho à nossa princesa que acaba de fazer 1 aninho!
+                </p>
+                
+                <button onclick="abrirPresente()" class="btn-ocean w-full flex items-center justify-center gap-2 font-semibold text-sm py-4 px-6 rounded-2xl relative overflow-hidden group">
+                    <span class="relative z-10 flex items-center gap-2 text-white">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><path d="M22 12H2"></path><path d="M10 12V8a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v4"></path><path d="M22 6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v6h20V6Z"></path></svg>
+                        Abrir Baú do Tesouro
+                    </span>
+                    <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+                </button>
+            </section>
+
+            <!-- TELA 2: O PRESENTE (PIX) -->
+            <section id="view-pix" class="view-transition hidden-view flex flex-col items-center text-center">
+                
+                <div class="mb-3 text-purple-400 opacity-90">
+                    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </div>
+
+                <h2 class="text-xl font-bold text-slate-700 mb-2">Com amor, Titio Paulo!</h2>
+                <p class="text-slate-500 text-[13px] mb-4 leading-relaxed px-2">
+                    Papai e mamãe, usem este "tesouro" em PIX para comprar aquele brinquedo incrível ou a roupinha linda que a Aylla Maitê merece. Feliz 1 aninho! 💖
+                </p>
+                
+                <!-- Área do Comprovante -->
+                <div class="w-full bg-white/95 p-2 sm:p-3 rounded-2xl border border-slate-200 shadow-sm relative z-20 max-w-[240px] mx-auto">
+                    <div class="flex items-center justify-center mb-2 mt-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Comprovante PIX</span>
+                        <svg class="h-4 w-4 text-emerald-400 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    
+                    <!-- IMAGEM DO COMPROVANTE -->
+                    <div class="rounded-xl overflow-hidden border border-slate-100 bg-slate-50 w-full flex items-center justify-center p-1 relative min-h-[250px]">
+                        
+                        <!-- Texto de Erro (Fica por baixo e só aparece se a imagem falhar) -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-4 z-0">
+                            <svg class="w-8 h-8 mb-2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span class="text-[10px] text-slate-400">A imagem <b>comprovante.jpeg</b> não foi encontrada na mesma pasta.</span>
+                        </div>
+
+                        <!-- Se a imagem não for encontrada, o comando "onerror" esconde a imagem quebrada para mostrar o texto de erro acima -->
+                        <img src="comprovante.jpeg" onerror="this.style.opacity='0'" alt="Comprovante de Transferência" class="w-full max-h-[400px] object-contain hover:scale-105 transition-transform duration-500 z-10 relative rounded-lg">
+                    </div>
+                    
+                    <p class="text-[10px] text-slate-400 mt-3 mb-1">Para a sereia mais linda! 🧜‍♀️</p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        const container = document.getElementById('dynamic-sea');
+
+        // Criação de bolhas flutuantes ao fundo
+        function criarBolhas() {
+            const numBubbles = 18;
+            for (let i = 0; i < numBubbles; i++) {
+                let bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                let size = Math.random() * 30 + 10;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.animationDuration = (Math.random() * 12 + 8) + 's';
+                bubble.style.animationDelay = Math.random() * 10 + 's';
+                container.appendChild(bubble);
+            }
+        }
+
+        // Adiciona pequenos peixes a nadar pelo fundo
+        function criarPeixes() {
+            const peixesAnimais = ['🐟', '🐠', '🐡'];
+            const numPeixes = 4;
+            
+            for (let i = 0; i < numPeixes; i++) {
+                let fish = document.createElement('div');
+                fish.className = 'fish';
+                fish.innerText = peixesAnimais[Math.floor(Math.random() * peixesAnimais.length)];
+                
+                fish.style.top = (Math.random() * 70 + 10) + '%'; 
+                fish.style.animationDuration = (Math.random() * 15 + 15) + 's'; 
+                fish.style.animationDelay = (Math.random() * 10) + 's';
+                
+                fish.style.fontSize = (Math.random() * 1.5 + 1.5) + 'rem';
+                
+                container.appendChild(fish);
+            }
+        }
+
+        criarBolhas();
+        criarPeixes();
+
+        // Efeito de "Bolhas a Estourar" ao abrir o presente
+        function dispararEfeitoMarinho() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var colors = ['#d4f0f0', '#a3c9e2', '#ffffff', '#e2d4f0'];
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+
+                var particleCount = 50 * (timeLeft / duration);
+                
+                confetti({
+                    particleCount: particleCount,
+                    startVelocity: 20,
+                    spread: 360,
+                    origin: { x: Math.random() * 0.4 + 0.3, y: 0.8 },
+                    colors: colors,
+                    shapes: ['circle'],
+                    scalar: Math.random() * 1.5 + 0.5,
+                    drift: Math.random() - 0.5,
+                    gravity: 0.3, 
+                    ticks: 150
+                });
+            }, 250);
+        }
+
+        function abrirPresente() {
+            const viewIntro = document.getElementById('view-intro');
+            const viewPix = document.getElementById('view-pix');
+            
+            viewIntro.classList.remove('active-view');
+            viewIntro.classList.add('hidden-view');
+            
+            setTimeout(() => {
+                viewIntro.style.display = 'none';
+                viewPix.classList.remove('hidden-view');
+                viewPix.classList.add('active-view');
+                dispararEfeitoMarinho();
+            }, 400);
+        }
+    </script>
+</body>
+</html>
